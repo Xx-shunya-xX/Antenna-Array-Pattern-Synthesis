@@ -72,7 +72,7 @@ conven_amp_excit = ones(5, 1);
 proposed_amp_excit = [1; 0.9018; 0.72759; 0.51502; 0.4159];
 
 %% Calling all the optimization techniques for number of iterations
-if(!optimize_results == false)
+if(optimize_results == false)
 	optimize_with_pso = false;			% Optimize with Particle Swarm Optimization
 	optimize_with_rga = false;			% Optimize with Real Coded Genetical Algorithm
 	optimize_with_tsa = false;			% Optimize with Tunicate Swarm Algorithm
