@@ -257,7 +257,7 @@ if(optimize_with_sca)
 end
 
 % Plotting graph
-plot(elements, norm_amp_conven,, 'DisplayName', 'Conv');
+plot(elements, norm_amp_conven, 'k-.', 'DisplayName', 'Conv');
 hold on
 
 plot(elements, norm_amp_proposed, 'k--', 'DisplayName', 'Proposed');
