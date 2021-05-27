@@ -114,7 +114,7 @@ for(nor = 1 : no_of_runs)
 		% SCA algo
 		disp('----------------------------> Optimizing Amplitude excitation by SCA');
 		disp(['Number of global iterations running on : ' num2str(nor)])
-		out_sca = sincosineAlgorithm(problem, params);
+		out_sca = sineCosineAlgorithm(problem, params);
 		I_sca = sort(out_sca.global_best .'/ max(out_sca.global_best), 'descend');
 
 		array_af_sca(nor, :)= I_sca;
