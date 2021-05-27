@@ -46,7 +46,6 @@ chi = 2 * kappa / abs(2 - phi - sqrt(power(phi, 2) - 4 * phi));
 %% Problem Definition
 problem.cost_func = @(x) minMax(x);		% Cost Function
 problem.n_var = N;						% Number of Unknown (Decision) Variables
-problem.dimensions = problem.n_var;
 problem.var_min = 0.000001;				% Lower Bound of Decision
 problem.var_max = 0.999999;				% Upper Bound of Decision
 

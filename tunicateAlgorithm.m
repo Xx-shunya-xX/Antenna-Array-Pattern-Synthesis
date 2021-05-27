@@ -3,7 +3,7 @@ function out = tunicateAlgorithm(problem, params)
 tic; 
 objective = @problem.cost_func;
 Search_Agents = problem.n_var;
-dimensions = problem.dimensions;
+dimensions = Search_Agents;
 Max_iterations = params.max_it;
 show_iter_info = params.show_iter_info;
 Lowerbound = [repmat(problem.var_min, 1, problem.dimensions)];
