@@ -5,6 +5,7 @@ close all;
 format long;
 
 %% Set Metaheuristic Algorithms ON/OFF
+optimize_results = true;			% Optmize the results or not, if false, show only convenction and proposed results
 optimize_with_pso = true;			% Optimize with Particle Swarm Optimization
 optimize_with_rga = true;			% Optimize with Real Coded Genetical Algorithm
 optimize_with_tsa = true;			% Optimize with Tunicate Swarm Algorithm
@@ -12,6 +13,7 @@ optimize_with_sca = true;			% Optimize with Sine Cosine Algorithm
 
 separated_graphs = true;			% If you want separated graphs for less visible confusion
 params.show_iter_info = true;		% Flag for Showing Iteration Information
+save_results = false;
 
 %% Set Axis for graph plots
 axis_x_from = 0;
@@ -70,6 +72,13 @@ conven_amp_excit = ones(5, 1);
 proposed_amp_excit = [1; 0.9018; 0.72759; 0.51502; 0.4159];
 
 %% Calling all the optimization techniques for number of iterations
+if(!optimize_results == false)
+	optimize_with_pso = false;			% Optimize with Particle Swarm Optimization
+	optimize_with_rga = false;			% Optimize with Real Coded Genetical Algorithm
+	optimize_with_tsa = false;			% Optimize with Tunicate Swarm Algorithm
+	optimize_with_sca = false;			% Optimize with Sine Cosine Algorithm
+end
+
 for(nor = 1 : no_of_runs)
 	if(optimize_with_pso)
 		% Calling PSO function (AF_pso)
@@ -309,6 +318,7 @@ if(separated_graphs)
 		axis([axis_x_from axis_x_to axis_y_from axis_y_to])
 		ylabel('Gain (dB)')
 		xlabel('Azimuth angle (deg)')
+		legend('Conv', 'Proposed', 'PSO')
 		grid on
 	end
 
@@ -323,6 +333,7 @@ if(separated_graphs)
 		axis([axis_x_from axis_x_to axis_y_from axis_y_to])
 		ylabel('Gain (dB)')
 		xlabel('Azimuth angle (deg)')
+		legend('Conv', 'Proposed', 'RGA')
 		grid on
 	end
 
@@ -337,6 +348,7 @@ if(separated_graphs)
 		axis([axis_x_from axis_x_to axis_y_from axis_y_to])
 		ylabel('Gain (dB)')
 		xlabel('Azimuth angle (deg)')
+		legend('Conv', 'Proposed', 'TSA')
 		grid on
 	end
 
@@ -351,6 +363,24 @@ if(separated_graphs)
 		axis([axis_x_from axis_x_to axis_y_from axis_y_to])
 		ylabel('Gain (dB)')
 		xlabel('Azimuth angle (deg)')
+		legend('Conv', 'Proposed', 'SCA')
 		grid on
 	end
+end
+
+%% Save results
+if(save_results)
+	result_path = "D:/Google Drive/College/SEM 6/minor-II/END/";
+	result_counter_path = result_path + "result_counter";
+	rc = load(result_counter_path);
+	res_count = rc.res_count + 1;
+	result_folder = ['results' num2str(res_count)];
+	result_path = result_path + result_folder;
+	delete(result_counter_path + ".mat");
+	save(result_counter_path, "res_count");
+	mkdir(result_path);
+	graph_path = result_path + "/";
+	%saveas(graph_power_pattern, graph_path + "graph_power_pattern", 'png');
+	%saveas(graph_elements, graph_path + "graph_elements", 'png');
+	%saveas(graph_separated, graph_path + "graph_separated", 'png');
 end
