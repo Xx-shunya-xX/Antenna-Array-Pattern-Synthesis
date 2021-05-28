@@ -31,8 +31,8 @@ k = pi / 2;				% Wave Number
 psi = 0;				% Amplitude Excitation
 d = lambda / 2;			% Distance between two elements of array
 theta = (0:0.1:180);	% Angle Division
-w_max = 0.9;			% Weight Max
-w_min = 0.5;			% Weight Min
+w_max = 0.88;			% Weight Max
+w_min = 0.00015;			% Weight Min
 N = 5;					% Number of variables
 no_of_runs = 15;		% Number of runs
 
@@ -57,9 +57,9 @@ params.w_damp = 1;										% Damping Ration of Inertia Weight
 params.c1 = chi * phi1;											% Personal Acceleration Coefficient
 params.c2 = chi * phi2;											% Social Acceleration Coefficient
 params.percent_child = 1;
-params.Mu = 0.00001;
+params.Mu = 0.05;
 params.beta = 1;
-params.sigma = 0.2;
+params.sigma = 0.4;
 
 array_af_pso = zeros(no_of_runs, N);
 array_af_rga = zeros(no_of_runs, N);
@@ -68,7 +68,8 @@ array_af_sca = zeros(no_of_runs, N);
 
 %% Conventional & Proposed PSO optimized result
 conven_amp_excit = ones(5, 1);
-proposed_amp_excit = [1; 0.9018; 0.72759; 0.51502; 0.4159];
+%proposed_amp_excit = [1; 0.9018; 0.72759; 0.51502; 0.4159];
+proposed_amp_excit = [1; 0.9010; 0.7255; 0.5120; 0.4088];
 
 %% Calling all the optimization techniques for number of iterations
 if(optimize_results == false)
