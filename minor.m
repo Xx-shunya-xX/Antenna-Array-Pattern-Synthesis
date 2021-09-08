@@ -13,7 +13,6 @@ optimize_with_sca = true;			% Optimize with Sine Cosine Algorithm
 
 separated_graphs = true;			% If you want separated graphs for less visible confusion
 params.show_iter_info = true;		% Flag for Showing Iteration Information
-save_results = false;
 
 %% Set Axis for graph plots
 axis_x_from = 0;
@@ -32,7 +31,7 @@ psi = 0;				% Amplitude Excitation
 d = lambda / 2;			% Distance between two elements of array
 theta = (0:0.1:180);	% Angle Division
 w_max = 0.88;			% Weight Max
-w_min = 0.00015;			% Weight Min
+w_min = 0.5;			% Weight Min
 N = 5;					% Number of variables
 no_of_runs = 15;		% Number of runs
 
@@ -68,7 +67,6 @@ array_af_sca = zeros(no_of_runs, N);
 
 %% Conventional & Proposed PSO optimized result
 conven_amp_excit = ones(5, 1);
-%proposed_amp_excit = [1; 0.9018; 0.72759; 0.51502; 0.4159];
 proposed_amp_excit = [1; 0.9010; 0.7255; 0.5120; 0.4088];
 
 %% Calling all the optimization techniques for number of iterations
@@ -369,6 +367,7 @@ if(separated_graphs)
 end
 
 %% Save results
+save_results = false;
 if(save_results)
 	result_path = "D:/Google Drive/College/SEM 6/minor-II/END/";
 	result_counter_path = result_path + "result_counter";

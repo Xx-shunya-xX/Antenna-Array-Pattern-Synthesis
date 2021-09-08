@@ -5,13 +5,13 @@ close all;
 format long;
 
 %% Set Metaheuristic Algorithms ON/OFF
+optimize_results = true;			% Optmize the results or not, if false, show only convenction and proposed results
 optimize_with_pso = true;			% Optimize with Particle Swarm Optimization
 optimize_with_rga = true;			% Optimize with Real Coded Genetical Algorithm
 optimize_with_tsa = true;			% Optimize with Tunicate Swarm Algorithm
 optimize_with_sca = true;			% Optimize with Sine Cosine Algorithm
 
 separated_graphs = true;			% If you want separated graphs for less visible confusion
-test_original = false;				% Original / Conventional / Proposed PSO results
 params.show_iter_info = true;		% Flag for Showing Iteration Information
 
 %% Set Axis for graph plots
@@ -30,10 +30,10 @@ k = pi / 2;				% Wave Number
 psi = 0;				% Amplitude Excitation
 d = lambda / 2;			% Distance between two elements of array
 theta = (0:0.1:180);	% Angle Division
-w_max = 0.9;			% Weight Max
+w_max = 0.88;			% Weight Max
 w_min = 0.5;			% Weight Min
 N = 5;					% Number of variables
-no_of_runs = 25;		% Number of runs
+no_of_runs = 15;		% Number of runs
 
 % Clerk and kennedy constrictions
 kappa = 1;							% 0 <= k <= 1
@@ -45,7 +45,6 @@ chi = 2 * kappa / abs(2 - phi - sqrt(power(phi, 2) - 4 * phi));
 %% Problem Definition
 problem.cost_func = @(x) minMax(x);		% Cost Function
 problem.n_var = N;						% Number of Unknown (Decision) Variables
-problem.dimensions = problem.n_var;
 problem.var_min = 0.000001;				% Lower Bound of Decision
 problem.var_max = 0.999999;				% Upper Bound of Decision
 
@@ -57,24 +56,30 @@ params.w_damp = 1;										% Damping Ration of Inertia Weight
 params.c1 = chi * phi1;											% Personal Acceleration Coefficient
 params.c2 = chi * phi2;											% Social Acceleration Coefficient
 params.percent_child = 1;
-params.Mu = 0.00001;
+params.Mu = 0.05;
 params.beta = 1;
-params.sigma = 0.2;
+params.sigma = 0.4;
 
 array_af_pso = zeros(no_of_runs, N);
 array_af_rga = zeros(no_of_runs, N);
 array_af_tsa = zeros(no_of_runs, N);
 array_af_sca = zeros(no_of_runs, N);
 
-%% Conventional PSO optimized result
-proposed_amp_excit = [1; 0.9018; 0.72759; 0.51502; 0.4159];
-
-AF_proposed = arrayFactor(proposed_amp_excit, k, 5, theta, psi);
+%% Conventional & Proposed PSO optimized result
+conven_amp_excit = ones(5, 1);
+proposed_amp_excit = [1; 0.9010; 0.7255; 0.5120; 0.4088];
 
 %% Calling all the optimization techniques for number of iterations
+if(optimize_results == false)
+	optimize_with_pso = false;			% Optimize with Particle Swarm Optimization
+	optimize_with_rga = false;			% Optimize with Real Coded Genetical Algorithm
+	optimize_with_tsa = false;			% Optimize with Tunicate Swarm Algorithm
+	optimize_with_sca = false;			% Optimize with Sine Cosine Algorithm
+end
+
 for(nor = 1 : no_of_runs)
 	if(optimize_with_pso)
-		%% Calling PSO function (AF_pso)
+		% Calling PSO function (AF_pso)
 		disp('----------------------------> Optimizing Amplitude excitation by PSO');
 		disp(['Number of global iterations running on : ' num2str(nor)])
 		out_pso = particleSwarm(problem, params);
@@ -84,7 +89,7 @@ for(nor = 1 : no_of_runs)
 	end
 
 	if(optimize_with_rga)
-		%% Calling Real Genetic Algorithm (AF_rga)
+		% Calling Real Genetic Algorithm (AF_rga)
 		disp('----------------------------> Optimizing Amplitude excitation by RGA');
 		disp(['Number of global iterations running on : ' num2str(nor)])
 		out_rga = realCodedGeneticAlgorithm(problem, params);
@@ -94,7 +99,7 @@ for(nor = 1 : no_of_runs)
 	end
 
 	if(optimize_with_tsa)
-		%% TSA algo
+		% TSA algo
 		disp('----------------------------> Optimizing Amplitude excitation by TSA');
 		disp(['Number of global iterations running on : ' num2str(nor)])
 		out_tsa = tunicateAlgorithm(problem, params);
@@ -104,15 +109,14 @@ for(nor = 1 : no_of_runs)
 	end
 
 	if(optimize_with_sca)
-		%% SCA algo
+		% SCA algo
 		disp('----------------------------> Optimizing Amplitude excitation by SCA');
 		disp(['Number of global iterations running on : ' num2str(nor)])
-		out_sca = sincosineAlgorithm(problem, params);
+		out_sca = sineCosineAlgorithm(problem, params);
 		I_sca = sort(out_sca.global_best .'/ max(out_sca.global_best), 'descend');
 
 		array_af_sca(nor, :)= I_sca;
 	end
-
 end % No of runs
 
 %% Calculating Median & Standard Deviation of optimized results
@@ -137,20 +141,25 @@ if(optimize_with_sca)
 end
 
 %% Calculating Array Factor
+AF_conven = arrayFactor(conven_amp_excit, k, 5, theta, psi);
+AF_proposed = arrayFactor(proposed_amp_excit, k, 5, theta, psi);
+
 if(optimize_with_pso)
-AF_pso = arrayFactor(I_pso_median.', k, N, theta, psi);
+	AF_pso = arrayFactor(I_pso_median.', k, N, theta, psi);
 end
 if(optimize_with_rga)
-    AF_rga = arrayFactor(I_rga_median.', k, N, theta, psi);
+	AF_rga = arrayFactor(I_rga_median.', k, N, theta, psi);
 end
 if(optimize_with_tsa)
-    AF_tsa = arrayFactor(I_tsa_median.', k, N, theta, psi);
+	AF_tsa = arrayFactor(I_tsa_median.', k, N, theta, psi);
 end
 if(optimize_with_sca)
-    AF_sca = arrayFactor(I_sca_median.', k, N, theta, psi);
+	AF_sca = arrayFactor(I_sca_median.', k, N, theta, psi);
 end
 
 %% Displaying Results
+disp('Conventional values : ');
+disp(conven_amp_excit);
 disp('Proposed values : ');
 disp(proposed_amp_excit);
 
@@ -185,7 +194,9 @@ end
 %% Plotting Graph
 figure(last_fig_number)
 last_fig_number = last_fig_number + 1;
-plot(theta, 20 * log10(AF_proposed / max(AF_proposed)), 'k-.', 'DisplayName', 'Proposed PSO')
+plot(theta, 20 * log10(AF_conven / max(AF_conven)), 'k-.', 'DisplayName', 'Conv')
+hold on
+plot(theta, 20 * log10(AF_proposed / max(AF_proposed)), 'Marker', '.', 'MarkerFaceColor', [0.4940 0.1840 0.5560], 'DisplayName', 'Proposed PSO')
 hold on
 
 if(optimize_with_pso)
@@ -214,14 +225,17 @@ xlabel('Azimuth angle (deg)')
 legend
 grid on
 
-% Element Graph
+%% Element Graph
 figure(last_fig_number)
 last_fig_number = last_fig_number + 1;
 
 elements_neg = (-5 : -1);
 elements = [elements_neg, fliplr(abs(elements_neg))];
 
-% Conv
+%% Calculating Normalized amplitudes
+rr_conven = conven_amp_excit;
+norm_amp_conven = [rr_conven(5) rr_conven(4) rr_conven(3) rr_conven(2) rr_conven(1) rr_conven(1) rr_conven(2) rr_conven(3) rr_conven(4) rr_conven(5)];
+
 rr_proposed = proposed_amp_excit;
 norm_amp_proposed = [rr_proposed(5) rr_proposed(4) rr_proposed(3) rr_proposed(2) rr_proposed(1) rr_proposed(1) rr_proposed(2) rr_proposed(3) rr_proposed(4) rr_proposed(5)];
 
@@ -232,7 +246,7 @@ if(optimize_with_pso)
 end
 
 if(optimize_with_rga)
-% RGA
+	% RGA
 	rr_rga = I_rga;
 	norm_amp_rga = [rr_rga(5) rr_rga(4) rr_rga(3) rr_rga(2) rr_rga(1) rr_rga(1) rr_rga(2) rr_rga(3) rr_rga(4) rr_rga(5)];
 end
@@ -250,27 +264,30 @@ if(optimize_with_sca)
 end
 
 % Plotting graph
-plot(elements, norm_amp_proposed, 'k-o', 'DisplayName', 'conv');
+plot(elements, norm_amp_conven, 'k-.', 'DisplayName', 'Conv');
+hold on
+
+plot(elements, norm_amp_proposed, 'k--', 'DisplayName', 'Proposed');
 hold on
 
 if(optimize_with_pso)
-plot(elements, norm_amp_pso, 'r-o', 'DisplayName', 'Mine PSO');
-hold on
+	plot(elements, norm_amp_pso, 'r-o', 'DisplayName', 'Mine PSO');
+	hold on
 end
 
 if(optimize_with_rga)
-plot(elements, norm_amp_rga, 'g-o', 'DisplayName', 'Real GA');
-hold on
+	plot(elements, norm_amp_rga, 'g-o', 'DisplayName', 'Real GA');
+	hold on
 end
 
 if(optimize_with_tsa)
-plot(elements, norm_amp_tsa, 'b-o', 'DisplayName', 'TSA');
-hold on
+	plot(elements, norm_amp_tsa, 'b-o', 'DisplayName', 'TSA');
+	hold on
 end
 
 if(optimize_with_sca)
-plot(elements, norm_amp_sca, 'm-o', 'DisplayName', 'SCA');
-hold off
+	plot(elements, norm_amp_sca, 'm-o', 'DisplayName', 'SCA');
+	hold off
 end
 
 xlabel('Elements #')
@@ -290,66 +307,79 @@ if(separated_graphs)
 
 	if(optimize_with_pso)
 		subplot(2,2,1)
-		plot(theta, 20 * log10(AF_proposed / max(AF_proposed)), 'k-.')
+		plot(theta, 20 * log10(AF_conven / max(AF_conven)), 'k-.', 'DisplayName', 'Conv')
 		hold on
-		plot(theta, 20 * log10(AF_pso / max(AF_pso)), 'r')
+		plot(theta, 20 * log10(AF_proposed / max(AF_proposed)), 'Marker', '.', 'MarkerFaceColor', [0.4940 0.1840 0.5560], 'DisplayName', 'Proposed PSO')
+		hold on
+		plot(theta, 20 * log10(AF_pso / max(AF_pso)), 'r', 'DisplayName', 'PSO')
 		hold off
 		axis([axis_x_from axis_x_to axis_y_from axis_y_to])
 		ylabel('Gain (dB)')
 		xlabel('Azimuth angle (deg)')
-		legend('Proposed PSO', 'Mine PSO')
+		legend('Conv', 'Proposed', 'PSO')
 		grid on
 	end
 
 	if(optimize_with_rga)
 		subplot(2,2,2)
-		plot(theta, 20 * log10(AF_proposed / max(AF_proposed)), 'k-.')
+		plot(theta, 20 * log10(AF_conven / max(AF_conven)), 'k-.', 'DisplayName', 'Conv')
 		hold on
-		plot(theta, 20 * log10(AF_rga / max(AF_rga)), 'g')
+		plot(theta, 20 * log10(AF_proposed / max(AF_proposed)), 'Marker', '.', 'MarkerFaceColor', [0.4940 0.1840 0.5560], 'DisplayName', 'Proposed PSO')
+		hold on
+		plot(theta, 20 * log10(AF_rga / max(AF_rga)), 'g', 'DisplayName', 'RGA')
 		hold off
 		axis([axis_x_from axis_x_to axis_y_from axis_y_to])
 		ylabel('Gain (dB)')
 		xlabel('Azimuth angle (deg)')
-		legend('Proposed PSO', 'Real GA')
+		legend('Conv', 'Proposed', 'RGA')
 		grid on
 	end
 
 	if(optimize_with_tsa)
 		subplot(2,2,3)
-		plot(theta, 20 * log10(AF_proposed / max(AF_proposed)), 'k-.')
+		plot(theta, 20 * log10(AF_conven / max(AF_conven)), 'k-.', 'DisplayName', 'Conv')
 		hold on
-		plot(theta, 20 * log10(AF_tsa / max(AF_tsa)), 'b')
+		plot(theta, 20 * log10(AF_proposed / max(AF_proposed)), 'Marker', '.', 'MarkerFaceColor', [0.4940 0.1840 0.5560], 'DisplayName', 'Proposed PSO')
+		hold on
+		plot(theta, 20 * log10(AF_tsa / max(AF_tsa)), 'b', 'DisplayName', 'TSA')
 		hold off
 		axis([axis_x_from axis_x_to axis_y_from axis_y_to])
 		ylabel('Gain (dB)')
 		xlabel('Azimuth angle (deg)')
-		legend('Proposed PSO', 'TSA')
+		legend('Conv', 'Proposed', 'TSA')
 		grid on
 	end
 
 	if(optimize_with_sca)
 		subplot(2,2,4)
-		plot(theta, 20 * log10(AF_proposed / max(AF_proposed)), 'k-.')
+		plot(theta, 20 * log10(AF_conven / max(AF_conven)), 'k-.', 'DisplayName', 'Conv')
 		hold on
-		plot(theta, 20 * log10(AF_sca / max(AF_sca)), 'm')
+		plot(theta, 20 * log10(AF_proposed / max(AF_proposed)), 'Marker', '.', 'MarkerFaceColor', [0.4940 0.1840 0.5560], 'DisplayName', 'Proposed PSO')
+		hold on
+		plot(theta, 20 * log10(AF_sca / max(AF_sca)), 'm', 'DisplayName', 'SCA')
 		hold off
 		axis([axis_x_from axis_x_to axis_y_from axis_y_to])
 		ylabel('Gain (dB)')
 		xlabel('Azimuth angle (deg)')
-		legend('Proposed PSO', 'SCA')
+		legend('Conv', 'Proposed', 'SCA')
 		grid on
 	end
 end
 
-%% For the testing purpose only !
-if(test_original)
-	figure(last_fig_number)
-	last_fig_number = last_fig_number + 1;
-
-	plot(theta,20*log10(AF_proposed/max(AF_proposed)))
-	axis([axis_x_from axis_x_to axis_y_from axis_y_to])
-	ylabel('Gain (dB)')
-	xlabel('Azimuth angle (deg)')
-	title('Proposed PSO')
-	grid on
+%% Save results
+save_results = false;
+if(save_results)
+	result_path = "D:/Google Drive/College/SEM 6/minor-II/END/";
+	result_counter_path = result_path + "result_counter";
+	rc = load(result_counter_path);
+	res_count = rc.res_count + 1;
+	result_folder = ['results' num2str(res_count)];
+	result_path = result_path + result_folder;
+	delete(result_counter_path + ".mat");
+	save(result_counter_path, "res_count");
+	mkdir(result_path);
+	graph_path = result_path + "/";
+	%saveas(graph_power_pattern, graph_path + "graph_power_pattern", 'png');
+	%saveas(graph_elements, graph_path + "graph_elements", 'png');
+	%saveas(graph_separated, graph_path + "graph_separated", 'png');
 end

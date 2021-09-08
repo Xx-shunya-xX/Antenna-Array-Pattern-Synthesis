@@ -63,7 +63,7 @@ function out = sineCosineAlgorithm(problem, params)
 		
 		for i=1:size(X,1)
 			 
-			% Check if solutions go outside the search spaceand bring them back
+			% Check if solutions go outside the search space and bring them back
 			Flag4ub=X(i,:)>ub;
 			Flag4lb=X(i,:)<lb;
 			X(i,:)=(X(i,:).*(~(Flag4ub+Flag4lb)))+ub.*Flag4ub+lb.*Flag4lb;

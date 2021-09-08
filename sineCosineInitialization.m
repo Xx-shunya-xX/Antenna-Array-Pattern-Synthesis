@@ -1,4 +1,4 @@
-function X= sineCoseineInitialization(SearchAgents_no,dim,ub,lb)
+function X = sineCoseineInitialization(SearchAgents_no,dim,ub,lb)
 
 Boundary_no= size(ub,2); % numnber of boundaries
 

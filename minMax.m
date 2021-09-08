@@ -8,5 +8,5 @@ function x = minMax(array_factor_phi)
 		cost_func = 2 * array_factor_phi(n) * cos(((n * 2) - 1) * (pi/2) * cos((pi/180) * theta(L)));
 		x = x + cost_func;
 	end
-	x = min(max(20 * log10(abs(x))));
+	x = min(max(20 * log(abs(x))));
 end
